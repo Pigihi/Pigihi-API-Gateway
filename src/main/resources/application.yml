@@ -1,0 +1,55 @@
+# Eureka properties
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
+
+# Server properties
+server:
+  port: 8191
+
+# Application properties
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      routes:
+#     Customer Microservice
+        - id: CUSTOMER-SERVICE
+          uri: lb://CUSTOMER-SERVICE
+          predicates:
+            - Path=/user/customer/**
+#     Order Microservice
+        - id: ORDER-SERVICE
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order/**
+#     Payment Microservice
+        - id: PAYMENT-SERVICE
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/makePayment/**, /paymentResponse/**
+#     Product Microservice
+        - id: PRODUCT-SERVICE
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product/**, /category/**
+#     Shop Microservice
+        - id: SHOP-SERVICE
+          uri: lb://SHOP-SERVICE
+          predicates:
+            - Path=/user/shop/**
+#     User Communication Microservice
+        - id: USER-COMMUNICATION-SERVICE
+          uri: lb://USER-COMMUNICATION-SERVICE
+          predicates:
+            - Path=/sendEmail/**, /sendMobile/**
+        
+        
+# Change from localhost to corresponding microservice
+# Should consider whether all microservices be accessible from outside
