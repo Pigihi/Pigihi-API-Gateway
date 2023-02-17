@@ -33,3 +33,9 @@ spring:
           predicates:
             - Path= path that should be handled by this microservice (Eg: /user/customer/**)
 ```
+
+## Local Deployment
+In Linux,
+
+1. Open terminal and run `docker-compose up`
+2. The application can be accessed at localhost:8191 (port 8191 is set in docker-compose)
