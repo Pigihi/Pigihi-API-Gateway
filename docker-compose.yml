@@ -1,0 +1,17 @@
+version: "3.3"
+
+services:
+  api-gateway:
+    container_name: api-gateway-v0.1
+    image: api-gateway-v0.1-image
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - 8191:8191
+    restart: always
+
+networks:
+  default:
+    external:
+      name: pigihi-network
