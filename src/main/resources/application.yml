@@ -1,10 +1,11 @@
 # Eureka properties
+eureka_hostname: service-registry
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://service-registry:8761/eureka
+      defaultZone: http://${eureka_hostname}:8761/eureka
   instance:
     hostname: localhost
 
@@ -27,6 +28,13 @@ spring:
           uri: lb://CUSTOMER-SERVICE
           predicates:
             - Path=/user/customer/**
+          filters:
+            - name: Logging
+              args:
+                authenticationUri: localhost:8092/temp
+#                baseMessage: My Custome Message
+                preLogger: true
+                postLogger: true
 #          filters:
 #            - AuthFilter
 #     Order Microservice
@@ -54,7 +62,9 @@ spring:
           uri: lb://USER-COMMUNICATION-SERVICE
           predicates:
             - Path=/sendEmail/**, /sendMobile/**
-        
+# If optional: is not used, the application won't start if there is no settings.yml 
+  config:
+    import: optional:settings.yml
         
 # Change from localhost to corresponding microservice
 # Should consider whether all microservices be accessible from outside
