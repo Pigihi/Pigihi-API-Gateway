@@ -51,10 +51,15 @@ public class LoggingGatewayFilterFactory extends AbstractGatewayFilterFactory<Lo
 		return (exchange, chain) -> {
 			ServerHttpRequest request = exchange.getRequest();
 			
+			String authHeader = request.getHeaders().get("Authorization").get(0);
+			String authJwt = authHeader.substring(7);
+			System.out.println("JWT: " + authJwt);
+			
 //			if(!request.getHeaders().containsKey("Authorization")) {
-				return WebClient.create().get()
+				return WebClient.create()
+						.get()
 //						Request is being made to the service along with the initial path (ex: /user/customer?email=)
-						.uri(config.getAuthenticationUri())
+						.uri(config.getAuthenticationUri().concat("?jwt=").concat(authJwt))
 						.exchange()
 						.flatMap(response -> {
 							return (response.statusCode()
@@ -87,8 +92,8 @@ public class LoggingGatewayFilterFactory extends AbstractGatewayFilterFactory<Lo
 	public static class Config {
 //		private String baseMessage;
 		private String authenticationUri;
-		private boolean preLogger;
-		private boolean postLogger;
+//		private boolean preLogger;
+//		private boolean postLogger;
 	}
 
 }
