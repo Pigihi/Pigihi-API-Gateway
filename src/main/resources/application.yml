@@ -1,12 +1,18 @@
+eureka_hostname: service-registry
+
+service_hostname: api-gateway
+
+authorization_uri: authentication-authorization-service:8099/auth/authorize/user
+
 # Eureka properties
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://service-registry:8761/eureka
+      defaultZone: http://${eureka_hostname}:8761/eureka
   instance:
-    hostname: localhost
+    hostname: ${service_hostname}
 
 # Server properties
 server:
@@ -22,11 +28,23 @@ spring:
         locator:
           enabled: true
       routes:
+#     AuthN-AuthZ Microservice 
+        - id: AUTH-SERVICE
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth/**
 #     Customer Microservice
         - id: CUSTOMER-SERVICE
           uri: lb://CUSTOMER-SERVICE
           predicates:
             - Path=/user/customer/**
+          filters:
+            - name: Authorization
+              args:
+                authenticationUri: ${authorization_uri}
+#                baseMessage: My Custome Message
+#                preLogger: true
+#                postLogger: true
 #          filters:
 #            - AuthFilter
 #     Order Microservice
@@ -34,27 +52,45 @@ spring:
           uri: lb://ORDER-SERVICE
           predicates:
             - Path=/order/**
+          filters:
+            - name: Authorization
+              args:
+                authenticationUri: ${authorization_uri}
 #     Payment Microservice
         - id: PAYMENT-SERVICE
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/makePayment/**, /paymentResponse/**
+          filters:
+            - name: Authorization
+              args:
+                authenticationUri: ${authorization_uri}
 #     Product Microservice
         - id: PRODUCT-SERVICE
           uri: lb://PRODUCT-SERVICE
           predicates:
             - Path=/product/**, /category/**
+          filters:
+            - name: Authorization
+              args:
+                authenticationUri: ${authorization_uri}
 #     Shop Microservice
         - id: SHOP-SERVICE
           uri: lb://SHOP-SERVICE
           predicates:
             - Path=/user/shop/**
+          filters:
+            - name: Authorization
+              args:
+                authenticationUri: ${authorization_uri}
 #     User Communication Microservice
         - id: USER-COMMUNICATION-SERVICE
           uri: lb://USER-COMMUNICATION-SERVICE
           predicates:
             - Path=/sendEmail/**, /sendMobile/**
-        
+# If optional: is not used, the application won't start if there is no settings.yml 
+  config:
+    import: optional:settings.yml
         
 # Change from localhost to corresponding microservice
 # Should consider whether all microservices be accessible from outside
