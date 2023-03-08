@@ -1,18 +1,4 @@
-eureka_hostname: service-registry
-
-service_hostname: api-gateway
-
 authorization_uri: authentication-authorization-service:8099/auth/authorize/user
-
-# Eureka properties
-eureka:
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://${eureka_hostname}:8761/eureka
-  instance:
-    hostname: ${service_hostname}
 
 # Server properties
 server:
@@ -91,6 +77,8 @@ spring:
 # If optional: is not used, the application won't start if there is no settings.yml 
   config:
     import: optional:settings.yml
-        
+  profiles:
+    active: standalone
+
 # Change from localhost to corresponding microservice
 # Should consider whether all microservices be accessible from outside

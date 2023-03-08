@@ -1,0 +1,6 @@
+# Standalone environment
+
+# Eureka properties
+eureka:
+  client:
+    enabled: false
