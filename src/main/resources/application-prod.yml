@@ -1,0 +1,15 @@
+# Production environment
+
+eureka_hostname: service-registry
+
+service_hostname: api-gateway
+
+# Eureka properties
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://${eureka_hostname}:8761/eureka
+  instance:
+    hostname: ${service_hostname}
